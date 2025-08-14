@@ -1,49 +1,44 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Unity Web Player | GEOPHY</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="shortcut icon" href="TemplateData/favicon.ico" />
+    <link rel="stylesheet" href="TemplateData/style.css" />
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=1488 height=800 tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width="1016" height="563" tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
           <div id="unity-progress-bar-full"></div>
         </div>
       </div>
-      <div id="unity-warning"> </div>
+      <div id="unity-warning"></div>
       <div id="unity-footer">
         <div id="unity-logo-title-footer"></div>
         <div id="unity-fullscreen-button"></div>
         <div id="unity-build-title">GEOPHY</div>
       </div>
     </div>
-    <script>
-      var canvas = document.querySelector("#unity-canvas");
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
+    <script>
+      const canvas = document.querySelector("#unity-canvas");
+
       function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
+        const warningBanner = document.querySelector("#unity-warning");
         function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+          warningBanner.style.display = warningBanner.children.length ? "block" : "none";
         }
-        var div = document.createElement('div');
+        const div = document.createElement("div");
         div.innerHTML = msg;
         warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        if (type === "error") div.style = "background: red; padding: 10px;";
         else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
+          if (type === "warning") div.style = "background: yellow; padding: 10px;";
+          setTimeout(() => {
             warningBanner.removeChild(div);
             updateBannerVisibility();
           }, 5000);
@@ -51,109 +46,144 @@
         updateBannerVisibility();
       }
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/GeometryBuild.loader.js";
-      var config = {
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/Geometry_Build.loader.js";
+      const config = {
         arguments: [],
-        dataUrl: buildUrl + "/GeometryBuild.data",
-        frameworkUrl: buildUrl + "/GeometryBuild.framework.js",
-        codeUrl: buildUrl + "/GeometryBuild.wasm",
+        dataUrl: buildUrl + "/Geometry_Build.data",
+        frameworkUrl: buildUrl + "/Geometry_Build.framework.js",
+        codeUrl: buildUrl + "/Geometry_Build.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "GEOPHY",
         productVersion: "0.1.0",
-        showBanner: unityShowBanner,
+        showBanner: unityShowBanner
       };
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
-
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
-
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
+        const meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content =
+          "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+        document.getElementsByTagName("head")[0].appendChild(meta);
         document.querySelector("#unity-container").className = "unity-mobile";
         canvas.className = "unity-mobile";
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-
       } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
         canvas.style.width = "900px";
         canvas.style.height = "450px";
-        //geometry bui;d
       }
 
       document.querySelector("#unity-loading-bar").style.display = "block";
 
-      var script = document.createElement("script");
+      // ===== Loader =====
+      const script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
+        })
+          .then((unityInstance) => {
+            document.querySelector("#unity-loading-bar").style.display = "none";
+            document.querySelector("#unity-fullscreen-button").onclick = () => {
+              unityInstance.SetFullscreen(1);
+            };
 
-              }).catch((message) => {
-                alert(message);
-              });
-                };
+            // >>> Quan trọng: expose instance ra window
+            window.unityInstance = unityInstance;
 
-                document.body.appendChild(script);
+            // Báo ngay cho parent (React) là engine + instance đã sẵn sàng
+            try {
+              window.parent?.postMessage({ type: "UNITY_ENGINE_LOADED" }, "*");
+            } catch (e) {
+              console.error("[WebGL] Error sending ENGINE_LOADED:", e);
+            }
+            try {
+              window.parent?.postMessage({ type: "UNITY_INSTANCE_READY" }, "*");
+            } catch (e) {
+              console.error("[WebGL] Error sending INSTANCE_READY:", e);
+            }
+          })
+          .catch((message) => {
+            alert(message);
+          });
+      };
+      document.body.appendChild(script);
+    </script>
 
-              </script>
-    
+    <!-- ===== Bridge WebGL <-> React (postMessage + SendMessage) ===== -->
     <script>
       console.log("[WebGL] page origin =", location.origin, "path =", location.pathname);
 
+      // Hàng đợi nếu SIMULATION_DATA đến trước khi unityInstance sẵn sàng
+      const _pending = [];
+
+      function _canSend() {
+        return !!(window.unityInstance && typeof window.unityInstance.SendMessage === "function");
+      }
+
+      function _forwardToCSharp(msgObj) {
+        try {
+          const fullMessage = JSON.stringify(msgObj); // giữ nguyên { type, payload, ... }
+          window.unityInstance.SendMessage("GameManager", "ReceiveSimulationJson", fullMessage);
+          console.log("[WebGL] Forwarded to C#: GameManager.ReceiveSimulationJson");
+          // (Tuỳ chọn) Gửi ACK cho parent
+          try {
+            window.parent?.postMessage({ type: "SIMULATION_ACK" }, "*");
+          } catch {}
+          return true;
+        } catch (err) {
+          console.error("[WebGL] SendMessage error:", err);
+          return false;
+        }
+      }
+
+      // Nhận message từ parent
       window.addEventListener("message", (e) => {
+        // Không chặn theo origin ở đây, vì parent chỉ có 1; nếu muốn, bạn có thể kiểm tra e.origin
         console.log("[WebGL] GOT message from", e.origin, e.data);
 
-        if (e.data?.type === "SIMULATION_DATA") {
-          const json = JSON.stringify(e.data.payload);
-          console.log("[WebGL] SIMULATION_DATA received. bytes =", new Blob([json]).size);
-          console.log("[WebGL] payload =", e.data.payload);
+        // Handshake test
+        if (e.data?.type === "PING") {
+          try {
+            window.parent?.postMessage({ type: "PONG" }, "*");
+          } catch {}
+          return;
+        }
 
-          // ✅ Chuyển tiếp vào C# với đúng format
-          if (window.unityInstance && typeof window.unityInstance.SendMessage === "function") {
-            try {
-              // Gửi toàn bộ message object (có cả type và payload)
-              const fullMessage = JSON.stringify(e.data);
-              window.unityInstance.SendMessage("GameManager", "ReceiveSimulationJson", fullMessage);
-              console.log("[WebGL] Forwarded to C#: GameManager.ReceiveSimulationJson");
-            } catch (err) {
-              console.error("[WebGL] SendMessage error:", err);
-            }
-          } else {
-            console.warn("[WebGL] unityInstance not ready yet");
+        if (e.data?.type === "SIMULATION_DATA") {
+          // Log size để tiện debug
+          try {
+            const json = JSON.stringify(e.data.payload);
+            console.log("[WebGL] SIMULATION_DATA received. bytes =", new Blob([json]).size);
+          } catch {}
+
+          if (!_canSend()) {
+            console.warn("[WebGL] unityInstance not ready yet -> queue");
+            _pending.push(e.data);
+            return;
           }
+          _forwardToCSharp(e.data);
         }
       });
 
-      // Gửi READY cho cha để biết listener đã sẵn sàng
-      try { window.parent?.postMessage({ type: "UNITY_READY" }, "*"); } catch { }
+      // Thông báo listener sẵn sàng (để React biết có thể PING/PONG)
+      try {
+        window.parent?.postMessage({ type: "UNITY_LISTENER_READY" }, "*");
+      } catch {
+        console.error("[WebGL] Error sending UNITY_LISTENER_READY");
+      }
+
+      // Nếu instance được set sau khi listener khởi tạo, flush queue ngay khi có
+      const _checkAndFlush = setInterval(() => {
+        if (_canSend()) {
+          clearInterval(_checkAndFlush);
+          console.log("[WebGL] unityInstance READY (late) -> flush", _pending.length, "queued messages");
+          while (_pending.length) {
+            const msg = _pending.shift();
+            _forwardToCSharp(msg);
+          }
+        }
+      }, 250);
     </script>
-    </body>
+  </body>
 </html>
